@@ -4,6 +4,7 @@ import com.matrimony.matrimony_backend.dto.response.UserResponse;
 import com.matrimony.matrimony_backend.entity.UserFamilyDetails;
 import com.matrimony.matrimony_backend.entity.UserPersonalDetails;
 import com.matrimony.matrimony_backend.entity.UserProfessionalDetails;
+import com.matrimony.matrimony_backend.entity.UserPreferences;
 
 public interface UserService {
     UserResponse getCurrentUserProfile();

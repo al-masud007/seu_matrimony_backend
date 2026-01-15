@@ -58,11 +58,14 @@ public class User {
     private String bio;
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private VerificationStatus verificationStatus = VerificationStatus.PENDING;
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private Role role = Role.USER;
 
+    @Builder.Default
     private Boolean isActive = true;
 
     @CreationTimestamp
