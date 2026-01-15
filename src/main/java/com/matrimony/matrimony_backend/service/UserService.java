@@ -10,4 +10,6 @@ public interface UserService {
     UserPersonalDetails updatePersonalDetails(UserPersonalDetails details);
     UserProfessionalDetails updateProfessionalDetails(UserProfessionalDetails details);
     UserFamilyDetails updateFamilyDetails(UserFamilyDetails details);
+    String uploadProfilePhoto(String base64Data);
+    UserPreferences updateUserPreferences(UserPreferences preferences);
 }

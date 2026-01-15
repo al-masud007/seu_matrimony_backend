@@ -1,14 +1,9 @@
 package com.matrimony.matrimony_backend.service.impl;
 
 import com.matrimony.matrimony_backend.dto.response.UserResponse;
-import com.matrimony.matrimony_backend.entity.User;
-import com.matrimony.matrimony_backend.entity.UserFamilyDetails;
-import com.matrimony.matrimony_backend.entity.UserPersonalDetails;
-import com.matrimony.matrimony_backend.entity.UserProfessionalDetails;
-import com.matrimony.matrimony_backend.repository.UserFamilyDetailsRepository;
-import com.matrimony.matrimony_backend.repository.UserPersonalDetailsRepository;
-import com.matrimony.matrimony_backend.repository.UserProfessionalDetailsRepository;
-import com.matrimony.matrimony_backend.repository.UserRepository;
+import com.matrimony.matrimony_backend.entity.*;
+import com.matrimony.matrimony_backend.repository.*;
+import com.matrimony.matrimony_backend.service.ImageService;
 import com.matrimony.matrimony_backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,11 +19,44 @@ public class UserServiceImpl implements UserService {
     private final UserPersonalDetailsRepository personalDetailsRepository;
     private final UserProfessionalDetailsRepository professionalDetailsRepository;
     private final UserFamilyDetailsRepository familyDetailsRepository;
+    private final UserPreferencesRepository userPreferencesRepository;
+    private final ImageService imageService;
 
     @Override
     public UserResponse getCurrentUserProfile() {
         User user = getCurrentUser();
         return mapToUserResponse(user);
+    }
+
+    @Override
+    @Transactional
+    public UserPreferences updateUserPreferences(UserPreferences preferences) {
+        User user = getCurrentUser();
+        UserPreferences existing = user.getPreferences();
+
+        if (existing == null) {
+            preferences.setUser(user);
+            return userPreferencesRepository.save(preferences);
+        }
+
+        preferences.setId(existing.getId());
+        preferences.setUser(user);
+        return userPreferencesRepository.save(preferences);
+    }
+
+    @Override
+    @Transactional
+    public String uploadProfilePhoto(String base64Data) {
+        User user = getCurrentUser();
+        
+        // Upload to Firestore (Mock for now)
+        String firestoreDocId = imageService.uploadImage(user.getId(), base64Data, "profile_photo");
+        
+        // Update User profilePhotoUrl with document ID
+        user.setProfilePhotoUrl(firestoreDocId);
+        userRepository.save(user);
+        
+        return firestoreDocId;
     }
 
     @Override

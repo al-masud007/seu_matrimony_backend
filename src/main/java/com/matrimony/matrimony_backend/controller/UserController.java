@@ -1,11 +1,11 @@
 package com.matrimony.matrimony_backend.controller;
 
+import com.matrimony.matrimony_backend.dto.request.PhotoUploadRequest;
 import com.matrimony.matrimony_backend.dto.response.ApiResponse;
 import com.matrimony.matrimony_backend.dto.response.UserResponse;
-import com.matrimony.matrimony_backend.entity.UserFamilyDetails;
-import com.matrimony.matrimony_backend.entity.UserPersonalDetails;
-import com.matrimony.matrimony_backend.entity.UserProfessionalDetails;
+import com.matrimony.matrimony_backend.entity.*;
 import com.matrimony.matrimony_backend.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +20,17 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<UserResponse>> getCurrentUser() {
         return ResponseEntity.ok(ApiResponse.success("Profile fetched successfully", userService.getCurrentUserProfile()));
+    }
+
+    @PostMapping("/me/photos")
+    public ResponseEntity<ApiResponse<String>> uploadProfilePhoto(@Valid @RequestBody PhotoUploadRequest request) {
+        String docId = userService.uploadProfilePhoto(request.getBase64Data());
+        return ResponseEntity.ok(ApiResponse.success("Photo uploaded successfully", docId));
+    }
+
+    @PutMapping("/me/preferences")
+    public ResponseEntity<ApiResponse<UserPreferences>> updateUserPreferences(@RequestBody UserPreferences preferences) {
+        return ResponseEntity.ok(ApiResponse.success("Preferences updated successfully", userService.updateUserPreferences(preferences)));
     }
 
     @PutMapping("/me/personal")
