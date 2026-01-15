@@ -2,11 +2,13 @@ package com.matrimony.matrimony_backend.service.impl;
 
 import com.matrimony.matrimony_backend.dto.request.LoginRequest;
 import com.matrimony.matrimony_backend.dto.request.RegisterRequest;
+import com.matrimony.matrimony_backend.dto.response.AuthResponse;
 import com.matrimony.matrimony_backend.dto.response.UserResponse;
 import com.matrimony.matrimony_backend.entity.User;
 import com.matrimony.matrimony_backend.enums.Role;
 import com.matrimony.matrimony_backend.enums.VerificationStatus;
 import com.matrimony.matrimony_backend.repository.UserRepository;
+import com.matrimony.matrimony_backend.security.JwtTokenProvider;
 import com.matrimony.matrimony_backend.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,9 +21,10 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Override
-    public UserResponse registerUser(RegisterRequest request) {
+    public AuthResponse registerUser(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Email already exists");
         }
@@ -40,11 +43,16 @@ public class AuthServiceImpl implements AuthService {
                 .build();
 
         User savedUser = userRepository.save(user);
-        return mapToUserResponse(savedUser);
+        String token = jwtTokenProvider.generateToken(savedUser.getEmail());
+
+        return AuthResponse.builder()
+                .accessToken(token)
+                .user(mapToUserResponse(savedUser))
+                .build();
     }
 
     @Override
-    public UserResponse loginUser(LoginRequest request) {
+    public AuthResponse loginUser(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new BadCredentialsException("Invalid email or password"));
 
@@ -52,7 +60,12 @@ public class AuthServiceImpl implements AuthService {
             throw new BadCredentialsException("Invalid email or password");
         }
 
-        return mapToUserResponse(user);
+        String token = jwtTokenProvider.generateToken(user.getEmail());
+
+        return AuthResponse.builder()
+                .accessToken(token)
+                .user(mapToUserResponse(user))
+                .build();
     }
 
     private UserResponse mapToUserResponse(User user) {

@@ -21,14 +21,14 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<UserResponse>> registerUser(@Valid @RequestBody RegisterRequest request) {
-        UserResponse userResponse = authService.registerUser(request);
-        return ResponseEntity.ok(ApiResponse.success("User registered successfully", userResponse));
+    public ResponseEntity<ApiResponse<AuthResponse>> registerUser(@Valid @RequestBody RegisterRequest request) {
+        AuthResponse authResponse = authService.registerUser(request);
+        return ResponseEntity.ok(ApiResponse.success("User registered successfully", authResponse));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<UserResponse>> loginUser(@Valid @RequestBody LoginRequest request) {
-        UserResponse userResponse = authService.loginUser(request);
-        return ResponseEntity.ok(ApiResponse.success("Login successful", userResponse));
+    public ResponseEntity<ApiResponse<AuthResponse>> loginUser(@Valid @RequestBody LoginRequest request) {
+        AuthResponse authResponse = authService.loginUser(request);
+        return ResponseEntity.ok(ApiResponse.success("Login successful", authResponse));
     }
 }
