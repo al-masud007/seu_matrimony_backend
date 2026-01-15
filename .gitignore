@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Plan and Documentation files
+*.md
+claude.md
