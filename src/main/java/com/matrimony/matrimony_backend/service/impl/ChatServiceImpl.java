@@ -7,6 +7,7 @@ import com.matrimony.matrimony_backend.entity.Conversation;
 import com.matrimony.matrimony_backend.entity.Message;
 import com.matrimony.matrimony_backend.entity.User;
 import com.matrimony.matrimony_backend.enums.MessageType;
+import com.matrimony.matrimony_backend.exception.ResourceNotFoundException;
 import com.matrimony.matrimony_backend.repository.ConversationRepository;
 import com.matrimony.matrimony_backend.repository.MessageRepository;
 import com.matrimony.matrimony_backend.repository.UserRepository;
@@ -47,7 +48,7 @@ public class ChatServiceImpl implements ChatService {
     public ConversationResponse getOrCreateConversation(UUID otherUserId) {
         User currentUser = getCurrentUser();
         User otherUser = userRepository.findById(otherUserId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         Conversation conversation = conversationRepository.findBetweenUsers(currentUser, otherUser)
                 .orElseGet(() -> {
@@ -66,7 +67,7 @@ public class ChatServiceImpl implements ChatService {
     public MessageResponse sendMessage(UUID conversationId, MessageRequest request) {
         User currentUser = getCurrentUser();
         Conversation conversation = conversationRepository.findById(conversationId)
-                .orElseThrow(() -> new RuntimeException("Conversation not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Conversation not found"));
 
         String imageDocId = null;
         if (request.getMessageType() == MessageType.IMAGE && request.getBase64Image() != null) {
@@ -94,7 +95,7 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public Page<MessageResponse> getMessages(UUID conversationId, Pageable pageable) {
         Conversation conversation = conversationRepository.findById(conversationId)
-                .orElseThrow(() -> new RuntimeException("Conversation not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Conversation not found"));
         
         return messageRepository.findByConversationOrderByCreatedAtDesc(conversation, pageable)
                 .map(this::mapToMessageResponse);

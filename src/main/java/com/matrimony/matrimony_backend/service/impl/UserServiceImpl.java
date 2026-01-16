@@ -125,6 +125,10 @@ public class UserServiceImpl implements UserService {
                 .role(user.getRole())
                 .verificationStatus(user.getVerificationStatus())
                 .profilePhotoUrl(user.getProfilePhotoUrl())
+                .personalDetails(user.getPersonalDetails())
+                .professionalDetails(user.getProfessionalDetails())
+                .familyDetails(user.getFamilyDetails())
+                .preferences(user.getPreferences())
                 .build();
     }
 }

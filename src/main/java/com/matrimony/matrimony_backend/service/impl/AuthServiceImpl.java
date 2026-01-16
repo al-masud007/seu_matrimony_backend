@@ -7,6 +7,7 @@ import com.matrimony.matrimony_backend.dto.response.UserResponse;
 import com.matrimony.matrimony_backend.entity.User;
 import com.matrimony.matrimony_backend.enums.Role;
 import com.matrimony.matrimony_backend.enums.VerificationStatus;
+import com.matrimony.matrimony_backend.exception.BadRequestException;
 import com.matrimony.matrimony_backend.repository.UserRepository;
 import com.matrimony.matrimony_backend.security.JwtTokenProvider;
 import com.matrimony.matrimony_backend.service.AuthService;
@@ -26,7 +27,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthResponse registerUser(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already exists");
+            throw new BadRequestException("Email already exists");
         }
 
         User user = User.builder()
@@ -80,6 +81,10 @@ public class AuthServiceImpl implements AuthService {
                 .role(user.getRole())
                 .verificationStatus(user.getVerificationStatus())
                 .profilePhotoUrl(user.getProfilePhotoUrl())
+                .personalDetails(user.getPersonalDetails())
+                .professionalDetails(user.getProfessionalDetails())
+                .familyDetails(user.getFamilyDetails())
+                .preferences(user.getPreferences())
                 .build();
     }
 }

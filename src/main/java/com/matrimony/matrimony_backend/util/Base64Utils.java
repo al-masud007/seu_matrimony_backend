@@ -15,6 +15,11 @@ public class Base64Utils {
         return Base64.getDecoder().decode(base64String);
     }
 
+    public static String encode(byte[] data) {
+        if (data == null) return null;
+        return Base64.getEncoder().encodeToString(data);
+    }
+
     public static long getFileSizeInKb(String base64String) {
         byte[] decodedBytes = decode(base64String);
         return decodedBytes != null ? decodedBytes.length / 1024 : 0;

@@ -1,5 +1,9 @@
 package com.matrimony.matrimony_backend.dto.response;
 
+import com.matrimony.matrimony_backend.entity.UserFamilyDetails;
+import com.matrimony.matrimony_backend.entity.UserPersonalDetails;
+import com.matrimony.matrimony_backend.entity.UserPreferences;
+import com.matrimony.matrimony_backend.entity.UserProfessionalDetails;
 import com.matrimony.matrimony_backend.enums.Gender;
 import com.matrimony.matrimony_backend.enums.ProfileFor;
 import com.matrimony.matrimony_backend.enums.Role;
@@ -27,4 +31,9 @@ public class UserResponse {
     private Role role;
     private VerificationStatus verificationStatus;
     private String profilePhotoUrl;
+    
+    private UserPersonalDetails personalDetails;
+    private UserProfessionalDetails professionalDetails;
+    private UserFamilyDetails familyDetails;
+    private UserPreferences preferences;
 }

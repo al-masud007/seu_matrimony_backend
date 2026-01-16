@@ -5,6 +5,8 @@ import com.matrimony.matrimony_backend.dto.response.InterestResponse;
 import com.matrimony.matrimony_backend.entity.Interest;
 import com.matrimony.matrimony_backend.entity.User;
 import com.matrimony.matrimony_backend.enums.InterestStatus;
+import com.matrimony.matrimony_backend.exception.BadRequestException;
+import com.matrimony.matrimony_backend.exception.ResourceNotFoundException;
 import com.matrimony.matrimony_backend.repository.InterestRepository;
 import com.matrimony.matrimony_backend.repository.UserRepository;
 import com.matrimony.matrimony_backend.service.InterestService;
@@ -30,14 +32,14 @@ public class InterestServiceImpl implements InterestService {
     public InterestResponse sendInterest(InterestRequest request) {
         User sender = getCurrentUser();
         User receiver = userRepository.findById(request.getReceiverId())
-                .orElseThrow(() -> new RuntimeException("Receiver not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Receiver not found"));
 
         if (sender.getId().equals(receiver.getId())) {
-            throw new RuntimeException("You cannot send interest to yourself");
+            throw new BadRequestException("You cannot send interest to yourself");
         }
 
         interestRepository.findBySenderAndReceiver(sender, receiver).ifPresent(i -> {
-            throw new RuntimeException("Interest already sent");
+            throw new BadRequestException("Interest already sent");
         });
 
         Interest interest = Interest.builder()
@@ -53,11 +55,11 @@ public class InterestServiceImpl implements InterestService {
     @Transactional
     public InterestResponse acceptInterest(UUID interestId) {
         Interest interest = interestRepository.findById(interestId)
-                .orElseThrow(() -> new RuntimeException("Interest not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Interest not found"));
 
         User currentUser = getCurrentUser();
         if (!interest.getReceiver().getId().equals(currentUser.getId())) {
-            throw new RuntimeException("Unauthorized to accept this interest");
+            throw new BadRequestException("Unauthorized to accept this interest");
         }
 
         interest.setStatus(InterestStatus.ACCEPTED);
@@ -68,11 +70,11 @@ public class InterestServiceImpl implements InterestService {
     @Transactional
     public InterestResponse rejectInterest(UUID interestId) {
         Interest interest = interestRepository.findById(interestId)
-                .orElseThrow(() -> new RuntimeException("Interest not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Interest not found"));
 
         User currentUser = getCurrentUser();
         if (!interest.getReceiver().getId().equals(currentUser.getId())) {
-            throw new RuntimeException("Unauthorized to reject this interest");
+            throw new BadRequestException("Unauthorized to reject this interest");
         }
 
         interest.setStatus(InterestStatus.REJECTED);
